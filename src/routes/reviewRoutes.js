@@ -1,9 +1,9 @@
-import {
+const {
     addNewReview,
     getReviews,
     getAvgMonthlyRating,
     getTotalRatings
-} from '../controllers/reviewController';
+} = require('../controllers/reviewController');
 
 
 const routes = (app) => {
@@ -23,4 +23,4 @@ const routes = (app) => {
         .get(getTotalRatings);
 }
 
-export default routes;
+module.exports = routes;

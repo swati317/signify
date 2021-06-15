@@ -1,13 +1,13 @@
-import fs from 'fs';
-import { Review } from '../models/reviewModel';
+const fs = require('fs');
+const { Review } = require('../models/reviewModel');
 
 const file = __dirname + "/../data/alexa.json";
 let reviews = [];
 
-export const addNewReview = (req, res) => {
+const addNewReview = (req, res) => {
     let review = new Review(req.body);
     let content = "\n" + JSON.stringify(review);
-    fs.appendFile(file, content, (err, data) => {
+    fs.appendFileSync(file, content, (err, data) => {
         if (err) {
             console.log(err);
         }
@@ -17,7 +17,7 @@ export const addNewReview = (req, res) => {
     });
 }
 
-export const getReviews = (req, res) => {
+const getReviews = (req, res) => {
     fs.readFile(file, 'utf8', function (err, data) {
         if (err) {
             res.send(err);
@@ -35,7 +35,7 @@ export const getReviews = (req, res) => {
     });
 }
 
-export const getAvgMonthlyRating = (req, res) => {
+const getAvgMonthlyRating = (req, res) => {
     fs.readFile(file, 'utf8', function (err, data) {
         if (err) {
             res.send(err);
@@ -62,14 +62,14 @@ export const getAvgMonthlyRating = (req, res) => {
         }
 
         let resultObj = {
-            'iTunes': Math.round(((appleStore.ratings / appleStore.count) + Number.EPSILON) * 100) / 100,
-            'GooglePlayStore': Math.round(((googleStore.ratings / googleStore.count) + Number.EPSILON) * 100) / 100
+            'iTunes': appleStore.ratings / appleStore.count,
+            'GooglePlayStore': googleStore.ratings / googleStore.count
         };
         res.send(resultObj);
     });
 }
 
-export const getTotalRatings = (req, res) => {
+const getTotalRatings = (req, res) => {
     fs.readFile(file, 'utf8', function (err, data) {
         if (err) {
             res.send(err);
@@ -88,3 +88,8 @@ export const getTotalRatings = (req, res) => {
         res.send(resultObj);
     });
 }
+
+module.exports.addNewReview = addNewReview;
+module.exports.getReviews = getReviews;
+module.exports.getAvgMonthlyRating = getAvgMonthlyRating;
+module.exports.getTotalRatings = getTotalRatings;

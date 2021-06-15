@@ -1,4 +1,4 @@
-export class Review {
+class Review {
     constructor(obj) {
         this.review = obj.review;
         this.author = obj.author;
@@ -9,3 +9,5 @@ export class Review {
         this.reviewed_date = new Date().toISOString();
     }
 }
+
+module.exports.Review = Review;
