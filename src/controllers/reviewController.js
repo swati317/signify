@@ -1,0 +1,90 @@
+import fs from 'fs';
+import { Review } from '../models/reviewModel';
+
+const file = __dirname + "/../data/alexa.json";
+let reviews = [];
+
+export const addNewReview = (req, res) => {
+    let review = new Review(req.body);
+    let content = "\n" + JSON.stringify(review);
+    fs.appendFile(file, content, (err, data) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(review);
+        }
+    });
+}
+
+export const getReviews = (req, res) => {
+    fs.readFile(file, 'utf8', function (err, data) {
+        if (err) {
+            res.send(err);
+        }
+        const filters = req.query;
+        const mapped = data.split('\n').map(val => JSON.parse(val));
+        const filteredReviews = mapped.filter(review => {
+            let isValid = true;
+            for (let key in filters) {
+                isValid = isValid && review[key] == filters[key];
+            }
+            return isValid;
+        });
+        res.send(filteredReviews);
+    });
+}
+
+export const getAvgMonthlyRating = (req, res) => {
+    fs.readFile(file, 'utf8', function (err, data) {
+        if (err) {
+            res.send(err);
+        }
+        reviews = data.split('\n').map(val => JSON.parse(val));
+        let appleStore = {
+            'name': 'iTunes',
+            'ratings': 0,
+            'count': 0
+        };
+        let googleStore = {
+            'name': 'GooglePlayStore',
+            'ratings': 0,
+            'count': 0
+        };
+        for (let i = 0; i < reviews.length; i++) {
+            if (reviews[i].review_source === appleStore.name) {
+                appleStore.ratings += reviews[i].rating;
+                appleStore.count++;
+            } else if (reviews[i].review_source === googleStore.name) {
+                googleStore.ratings += reviews[i].rating;
+                googleStore.count++;
+            }
+        }
+
+        let resultObj = {
+            'iTunes': Math.round(((appleStore.ratings / appleStore.count) + Number.EPSILON) * 100) / 100,
+            'GooglePlayStore': Math.round(((googleStore.ratings / googleStore.count) + Number.EPSILON) * 100) / 100
+        };
+        res.send(resultObj);
+    });
+}
+
+export const getTotalRatings = (req, res) => {
+    fs.readFile(file, 'utf8', function (err, data) {
+        if (err) {
+            res.send(err);
+        }
+        reviews = data.split('\n').map(val => JSON.parse(val));
+        let ratings = new Array(6).fill(0);
+        for (let i = 0; i < reviews.length; i++) {
+            ratings[reviews[i].rating]++;
+        }
+
+        let resultObj = {};
+        for (let i = 1; i < ratings.length; i++) {
+            resultObj[i] = ratings[i];
+        }
+
+        res.send(resultObj);
+    });
+}
