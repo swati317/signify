@@ -7,7 +7,7 @@ let reviews = [];
 const addNewReview = (req, res) => {
     let review = new Review(req.body);
     let content = "\n" + JSON.stringify(review);
-    fs.appendFileSync(file, content, (err, data) => {
+    fs.appendFile(file, content, (err, data) => {
         if (err) {
             console.log(err);
         }

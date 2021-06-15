@@ -14,7 +14,12 @@ const routes = (app) => {
             console.log(`Request from: ${req.method}`)
             next();
         }, getReviews)
-        .post(addNewReview);
+        .post((req, res, next) => {
+            //middleware
+            console.log(`Request from: ${req.originalUrl}`)
+            console.log(`Request from: ${req.method}`)
+            next();
+        }, addNewReview);
 
     app.route('/reviews/avgMonthlyRating')
         .get(getAvgMonthlyRating);
