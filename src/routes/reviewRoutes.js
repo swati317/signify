@@ -24,7 +24,7 @@ const routes = (app) => {
     app.route('/reviews/avgMonthlyRating')
         .get(getAvgMonthlyRating);
 
-    app.route('/reviews/getTotalRating')
+    app.route('/reviews/totalRating')
         .get(getTotalRatings);
 }
 
